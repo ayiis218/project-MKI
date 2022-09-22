@@ -1,4 +1,4 @@
-const data = [
+const array = [
    {
       session_id: 1,
       time: '09:00',
@@ -94,4 +94,40 @@ const data = [
    },
 ];
 
-function changeFormat() {}
+function changeFormat(params) {
+   let data = [];
+
+   for (let i = 0; i < params.length; i++) {
+      let index = data.findIndex(
+         (item) => item.session_id === params[i].session_id
+      );
+
+      if (index === -1) {
+         data.push({
+            session_id: params[i].session_id,
+            time: params[i].time,
+            classes: [
+               { ...params[i].class, students: [{ ...params[i].student }] },
+            ],
+         });
+      } else {
+         let classIndex = data[index].classes.findIndex(
+            (item) => item.class_id === params[i].class.class_id
+         );
+
+         if (classIndex === -1) {
+            data[index].classes.push({
+               ...params[i].class,
+               students: [{ ...params[i].student }],
+            });
+         } else {
+            data[index].classes[classIndex].students.push({
+               ...params[i].student,
+            });
+         }
+      }
+   }
+   return data;
+}
+
+console.log(changeFormat(array));
